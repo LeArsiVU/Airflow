@@ -19,4 +19,4 @@ params: Iterable[dict] = ctl_dags.set_index('DAG', drop=False).to_dict('records'
 
 for param in params:
     if param["Activo"] == 1:
-        print(f'{param["DAG"]}')
+        print(f'{param["DAG"]} : {param["Dataset"]}.{param["Tabla"]}')
