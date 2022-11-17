@@ -30,7 +30,7 @@ params: Iterable[dict] = ctl_dags.set_index('DAG', drop=False).to_dict('records'
 #Es posible definir más dags desde un solo archivo
 
 for param in params:
-	if param["Activo"] == 1:
+	if param["Activo"] == True:
 
 		with DAG(
 		    param["DAG"],
