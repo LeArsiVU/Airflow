@@ -51,7 +51,7 @@ for param in params:
             @task(task_id="to_csv")
             def to_csv(tabla):
                 csv = open(f"/home/isra/Descargas/{param['DAG']}.csv","a")
-                contenido = f"{tabla},{pendulum.now('America/Mazatlan')}"
+                contenido = f"{tabla},{pendulum.now('America/Mazatlan').format('YYYY-MM-DD HH:mm:ss')}\r\n"
                 csv.write(contenido)
                 return 0
 
