@@ -34,6 +34,7 @@ for param in params:
 		    start_date=pendulum.datetime(2022, 11, 15, tz="UTC"),
 		    catchup=False,
 		    dagrun_timeout=datetime.timedelta(minutes=4),
+			default_args={'owner':'Isra'},
 		    tags=[param["Canalización"]]
 		) as dag:
 		    #Activar DAG
