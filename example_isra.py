@@ -27,8 +27,15 @@ ctl_dags = pd.read_excel(excel_file,excel_sheet)
 #Se guarda la información con el nombre de DAG como índice
 params: Iterable[dict] = ctl_dags.set_index('DAG', drop=False).to_dict('records')
 
-#Es posible definir más dags desde un solo archivo
+#Se define funcion para escribir info en csv
+@task(task_id="to_csv")
+def to_csv(tabla):
+    csv = open(f"/home/isra/Descargas/{param['DAG']}.csv","a")
+    contenido = f"{tabla},{pendulum.now('America/Mazatlan').format('YYYY-MM-DD HH:mm:ss')}\r\n"
+    csv.write(contenido)
+    return 0
 
+#Es posible definir más dags desde un solo archivo
 for param in params:
     if param["Activo"] == True:
 
@@ -47,13 +54,6 @@ for param in params:
             #Activar DAG
             #dag = DagModel.get_dagmodel(param["DAG"])
             #dag.set_is_paused(is_paused=False)
-
-            @task(task_id="to_csv")
-            def to_csv(tabla):
-                csv = open(f"/home/isra/Descargas/{param['DAG']}.csv","a")
-                contenido = f"{tabla},{pendulum.now('America/Mazatlan').format('YYYY-MM-DD HH:mm:ss')}\r\n"
-                csv.write(contenido)
-                return 0
 
             Tarea_1 = EmptyOperator(
                     task_id="Tarea_1",
