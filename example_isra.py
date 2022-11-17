@@ -41,6 +41,7 @@ for param in params:
 			default_args={'owner':param['Owner'], 
 						  'retries':2,
 						  'retry_delay':timedelta(minutes=5)},
+			description= f"Actualiza  {param['Proyecto']}.{param['Dataset']}.{param['Tabla']}",
 		    tags=[param["Grupo"]]
 		) as dag:
 		    #Activar DAG
