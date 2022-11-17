@@ -15,7 +15,7 @@ from airflow.models import DagModel
 from typing import List, Iterable
 
 # Info del excel
-excel_file = '/home/arsi/Descargas/Canalización e Integración de datos.xlsx'
+excel_file = '/home/isra/Descargas/Canalización e Integración de datos.xlsx'
 excel_sheet = 'General (Ejemplo Propuesta 2)'
 
 #Lee el excel
