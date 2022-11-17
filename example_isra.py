@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-import datetime
+import datetime 
+from datetime import timedelta
 import pendulum
 import pandas as pd
 
@@ -13,6 +14,8 @@ from airflow.operators.empty import EmptyOperator
 from airflow.models import DagModel
 
 from typing import List, Iterable
+
+
 
 # Info del excel
 excel_file = '/home/isra/Descargas/Canalización e Integración de datos.xlsx'
@@ -28,14 +31,17 @@ params: Iterable[dict] = ctl_dags.set_index('DAG', drop=False).to_dict('records'
 
 for param in params:
 	if param["Activo"] == 1:
+
 		with DAG(
 		    param["DAG"],
 		    schedule=param["Schedule"],
-		    start_date=pendulum.datetime(2022, 11, 15, tz="UTC"),
+			start_date=pendulum.from_format(f'{param["Fecha Inicio"]}','YYYY-MM-DD', tz="America/Mazatlan"),
 		    catchup=False,
 		    dagrun_timeout=datetime.timedelta(minutes=4),
-			default_args={'owner':'Isra'},
-		    tags=[param["Canalización"]]
+			default_args={'owner':param['Owner'], 
+						  'retries':2,
+						  'retry_delay':timedelta(minutes=5)},
+		    tags=[param["Grupo"]]
 		) as dag:
 		    #Activar DAG
 		    #dag = DagModel.get_dagmodel(param["DAG"])
