@@ -8,7 +8,7 @@ import pandas as pd
 
 from airflow import DAG
 from airflow.decorators import task
-from airflow.operators.dummy_operator import DummyOperator
+from airflow.operators.empty import EmptyOperator
 
 from airflow.models import DagModel
 
@@ -40,19 +40,19 @@ for param in params:
 		    #dag = DagModel.get_dagmodel(param["DAG"])
 		    #dag.set_is_paused(is_paused=False)
 
-		    Tarea_1 = DummyOperator(
+		    Tarea_1 = EmptyOperator(
 					task_id="Tarea_1",
 					trigger_rule="all_success",
 		    )			    
-		    Tarea_2 = DummyOperator(
+		    Tarea_2 = EmptyOperator(
 					task_id="Tarea_2",
 					trigger_rule="all_success",
 		    )
-		    Tarea_3 = DummyOperator(
+		    Tarea_3 = EmptyOperator(
 					task_id="Tarea_3",
 					trigger_rule="all_success",
 		    )
-		    Tarea_4 = DummyOperator(
+		    Tarea_4 = EmptyOperator(
 					task_id="Tarea_4",
 					trigger_rule="all_success",
 		    )
