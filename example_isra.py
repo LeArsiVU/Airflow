@@ -15,7 +15,13 @@ from airflow.models import DagModel
 
 from typing import List, Iterable
 
-
+#Se define funcion para escribir info en csv
+@task(task_id="to_csv")
+def to_csv(informacion):
+    csv = open(f"/home/isra/Descargas/{informacion['DAG']}.csv","a")
+    contenido = f"{informacion['DAG']},{informacion['Tabla']},{pendulum.now('America/Mazatlan').format('YYYY-MM-DD HH:mm:ss')}\r\n"
+    csv.write(contenido)
+    return 0
 
 # Info del excel
 excel_file = '/home/isra/Descargas/Canalización e Integración de datos.xlsx'
@@ -26,14 +32,6 @@ ctl_dags = pd.read_excel(excel_file,excel_sheet)
 
 #Se guarda la información con el nombre de DAG como índice
 params: Iterable[dict] = ctl_dags.set_index('DAG', drop=False).to_dict('records')
-
-#Se define funcion para escribir info en csv
-@task(task_id="to_csv")
-def to_csv(tabla):
-    csv = open(f"/home/isra/Descargas/{param['DAG']}.csv","a")
-    contenido = f"{tabla},{pendulum.now('America/Mazatlan').format('YYYY-MM-DD HH:mm:ss')}\r\n"
-    csv.write(contenido)
-    return 0
 
 #Es posible definir más dags desde un solo archivo
 for param in params:
@@ -71,6 +69,6 @@ for param in params:
                     task_id="Tarea_4",
                     trigger_rule="all_success",
             )
-            Tarea_5 = to_csv(param['Tabla'])
+            Tarea_5 = to_csv(param)
                 
         Tarea_1>>[Tarea_2,Tarea_3]>>Tarea_4>>Tarea_5
