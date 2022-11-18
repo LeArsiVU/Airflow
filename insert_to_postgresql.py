@@ -38,7 +38,7 @@ for param in params:
     if param["Activo"] == True:
 
         with DAG(
-            param["DAG"],
+            f'2-{param["DAG"]}',
             schedule=param["Schedule"],
             start_date=pendulum.from_format(f'{param["Fecha Inicio"]}','YYYY-MM-DD', tz="America/Mazatlan"),
             catchup=False,
