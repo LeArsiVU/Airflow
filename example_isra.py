@@ -14,7 +14,7 @@ from airflow.operators.empty import EmptyOperator
 
 from airflow.models import DagModel
 
-from typing import List, Iterable
+from typing import Iterable
 
 #Se define funcion para escribir info en csv
 @task(task_id="to_csv")
@@ -49,7 +49,7 @@ for param in params:
                           'retries':2,
                           'retry_delay':timedelta(minutes=5)},
             description= f"Actualiza  {param['Proyecto']}.{param['Dataset']}.{param['Tabla']}",
-            tags=[param["Grupo"]]
+            tags=[param["Grupo"],param["Tipo Origen"]]
         ) as dag:
             #Activar DAG
             #dag = DagModel.get_dagmodel(param["DAG"])
