@@ -49,7 +49,7 @@ for param in params:
                           'retries':2,
                           'retry_delay':timedelta(minutes=5)},
             description= f"Actualiza  {param['Proyecto']}.{param['Dataset']}.{param['Tabla']}",
-            tags=[param["Grupo"],param["Tipo Origen"]]
+            tags=[param["Grupo"],param["Tipo Origen"],param["Unidad De Negocio O Transversales"],param["Área De Negocio O Transversales"]]
         ) as dag:
             #Activar DAG
             #dag = DagModel.get_dagmodel(param["DAG"])
