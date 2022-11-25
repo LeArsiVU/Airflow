@@ -11,6 +11,7 @@ import numpy as np
 from airflow import DAG
 from airflow.decorators import task
 from airflow.operators.empty import EmptyOperator
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 
 from airflow.models import DagModel
 
@@ -87,8 +88,8 @@ for param in params:
         with DAG(
             param["DAG"],
             schedule=param["Schedule"],
-            #start_date=pendulum.from_format(f'{param["Fecha Inicio"]}','YYYY-MM-DD', tz="America/Mazatlan"),
-            start_date=pendulum.today('America/Mazatlan').add(days=-2),
+            start_date=pendulum.from_format(f'{param["Fecha Inicio"]}','YYYY-MM-DD', tz="America/Mazatlan"),
+            #start_date=pendulum.today('America/Mazatlan').add(days=-2),
             catchup=False,
             dagrun_timeout=datetime.timedelta(minutes=4),
             default_args={'owner':param['Owner'], 
@@ -108,6 +109,19 @@ for param in params:
             #dag = DagModel.get_dagmodel(param["DAG"])
             #dag.set_is_paused(is_paused=False)
 
-            task_from_pg_to_csv=from_postgresql(conn_param,param["Query Origen"],param["Output File"])         
+            task_from_pg_to_csv=from_postgresql(conn_param,param["Query Origen"],param["Output File"])  
+
+            #Ejecuta un dag externo
+            if param["Executa DAG"]!='':
+                task_trigger = TriggerDagRunOperator(
+                    task_id = 'trigger_'+param["Executa DAG"],
+                    trigger_dag_id=param["Executa DAG"],
+                    dag=dag
+                )    
+            else:
+                task_trigger  = EmptyOperator(
+                    task_id="empty",
+                    trigger_rule="all_success",
+                )
                 
-        task_from_pg_to_csv
+        task_from_pg_to_csv>>task_trigger
