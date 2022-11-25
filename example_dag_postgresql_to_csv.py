@@ -89,7 +89,6 @@ for param in params:
             param["DAG"],
             schedule=param["Schedule"],
             start_date=pendulum.from_format(f'{param["Fecha Inicio"]}','YYYY-MM-DD', tz="America/Mazatlan"),
-            #start_date=pendulum.today('America/Mazatlan').add(days=-2),
             catchup=False,
             dagrun_timeout=datetime.timedelta(minutes=4),
             default_args={'owner':param['Owner'], 
