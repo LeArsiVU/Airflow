@@ -122,6 +122,7 @@ for param in params:
                 task_trigger = TriggerDagRunOperator(
                     task_id = 'trigger_'+param["Executa DAG"],
                     trigger_dag_id=param["Executa DAG"],
+                    trigger_rule="all_success",
                     dag=dag
                 )    
             else:
