@@ -85,9 +85,16 @@ params: Iterable[dict] = ctl_dags.set_index('DAG', drop=False).to_dict('records'
 #Es posible definir más dags desde un solo archivo
 for param in params:
     if param["Activo"] == True:
+        
+        #Si no se tiene una expresion CRON entonces se establece un valor de None
+        if param["Schedule"] != '':
+            scheduling = param["Schedule"]
+        else:
+            scheduling = None
+
         with DAG(
             param["DAG"],
-            schedule=param["Schedule"],
+            schedule=scheduling,
             start_date=pendulum.from_format(f'{param["Fecha Inicio"]}','YYYY-MM-DD', tz="America/Mazatlan"),
             catchup=False,
             dagrun_timeout=datetime.timedelta(minutes=4),
