@@ -19,11 +19,13 @@ from typing import Iterable
 
 # Info del excel
 excel_file = '/home/isra/Descargas/Canalización e Integración de datos.xlsx'
-excel_sheet = 'Exemplo Ejecuta'
+excel_sheet = 'Ejecuta Ejemplo'
 
 #Lee el excel
 #Cambia NaN a Null, ya que los NaN no son válidos en el typo json de la tabla serialized_dags
-ctl_dags = pd.read_excel(excel_file,excel_sheet).replace(np.nan,'')
+ctl_dags = pd.read_excel(excel_file,excel_sheet,usecols=[3,4,5]).replace(np.nan,'')
+
+ctl_dags= ctl_dags[ctl_dags["DAG"]!='']
 
 #Se guarda la información con el nombre de DAG como índice
 params: Iterable[dict] = ctl_dags.set_index('DAG', drop=False).to_dict('records')

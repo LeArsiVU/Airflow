@@ -73,7 +73,7 @@ def from_postgresql(parametros_conexion,query,path):
 
 # Info del excel
 excel_file = '/home/isra/Descargas/Canalización e Integración de datos.xlsx'
-excel_sheet = 'General (Ejemplo Propuesta 3)'
+excel_sheet = 'Catálogo Dags Ejemplo'
 
 #Lee el excel
 #Cambia NaN a Null, ya que los NaN no son válidos en el typo json de la tabla serialized_dags
@@ -102,7 +102,7 @@ for param in params:
                           'retries':1,
                           'retry_delay':timedelta(minutes=0)},
             description= f"Actualiza  {param['Proyecto']}.{param['Dataset']}.{param['Tabla']}",
-            tags=[param["Grupo"],param["Tipo Origen"],param["Unidad De Negocio O Transversales"],param["Área De Negocio O Transversales"]]
+            tags=["ETL",param["Grupo"],param["Tipo Origen"],param["Unidad De Negocio O Transversales"],param["Área De Negocio O Transversales"]]
         ) as dag:
 
             conn_param = dict(host=param["Host"],
