@@ -15,6 +15,8 @@ from airflow.models import DagModel
 
 from typing import Iterable
 
+import json
+
 #Permite saber la posicion de creación de un operador dado su nombre
 
 # Info del excel
@@ -27,6 +29,14 @@ info_ejecuta = pd.read_excel(excel_file,excel_sheet,header=None,usecols=[0,1]).r
 header = info_ejecuta.iloc[0]
 info_ejecuta.columns= header
 info_ejecuta=info_ejecuta[1:]
+
+tags_json= '{'+f'"tags": [{info_ejecuta["Tags"].to_string(index=False)}]'+'}'
+
+tag_dict = json.loads(tags_json)
+tag_list = tag_dict['tags']
+tag_list.append(info_ejecuta["Grupo"].to_string(index=False))
+tag_list.append(info_ejecuta["Unidad De Negocio O Transversales"].to_string(index=False))
+tag_list.append(info_ejecuta["Área De Negocio O Transversales"].to_string(index=False))
 
 #Lee el excel
 #Cambia NaN a Null, ya que los NaN no son válidos en el typo json de la tabla serialized_dags
@@ -53,7 +63,7 @@ if info_ejecuta["Activo"][1]==True:
                             'retries':1,
                             'retry_delay':timedelta(minutes=0)},
             description= "Ejecuta una serie de dags",
-            tags=["Ejecuta",info_ejecuta["Grupo"][1],info_ejecuta["Unidad De Negocio O Transversales"][1],info_ejecuta["Área De Negocio O Transversales"][1]]
+            tags=tag_list
                 
     ) as dag:
 
