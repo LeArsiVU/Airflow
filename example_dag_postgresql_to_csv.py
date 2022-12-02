@@ -20,6 +20,8 @@ from typing import Iterable
 import  psycopg2 as pg
 from   psycopg2 import Error
 
+import json
+
 @task(task_id="from_postgresql")
 def from_postgresql(parametros_conexion,query,path):
     try: 
@@ -92,6 +94,14 @@ for param in params:
         else:
             scheduling = None
 
+        tags_json= '{'+f'"tags":[{param["Tags"]}]'+'}'
+        tag_dict = json.loads(tags_json)
+        tag_list = tag_dict['tags']
+        tag_list.append(param["Grupo"])
+        tag_list.append(param["Tipo Origen"])
+        tag_list.append(param["Unidad De Negocio O Transversales"])
+        tag_list.append(param["Área De Negocio O Transversales"])
+
         with DAG(
             param["DAG"],
             schedule=scheduling,
@@ -102,7 +112,7 @@ for param in params:
                           'retries':1,
                           'retry_delay':timedelta(minutes=0)},
             description= f"Actualiza  {param['Proyecto']}.{param['Dataset']}.{param['Tabla']}",
-            tags=["ETL",param["Grupo"],param["Tipo Origen"],param["Unidad De Negocio O Transversales"],param["Área De Negocio O Transversales"]]
+            tags=tag_list
         ) as dag:
 
             conn_param = dict(host=param["Host"],
