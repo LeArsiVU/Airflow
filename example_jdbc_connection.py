@@ -30,7 +30,7 @@ connection_string='jdbc:postgresql://'+ dsn_hostname+':'+ dsn_port +'/'+ dsn_dat
 
 url = f'{connection_string}:user={dsn_uid};password={dsn_pwd}'
 
-print("Connection String: " + connection_string)
+print("Connection String: " + url)
 
 conn = jaydebeapi.connect(jdbc_driver_name, connection_string, {'user': dsn_uid, 'password': dsn_pwd},
 jars=jdbc_driver_loc)
