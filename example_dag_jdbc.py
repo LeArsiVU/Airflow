@@ -103,6 +103,7 @@ for param in params:
         tag_list.append(param["Unidad De Negocio O Transversales"])
         tag_list.append(param["Área De Negocio O Transversales"])
 
+
         with DAG(
             param["DAG"],
             schedule=scheduling,
