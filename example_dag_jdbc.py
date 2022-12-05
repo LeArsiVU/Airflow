@@ -135,9 +135,9 @@ for param in params:
             if param["Executa DAG"]!='':
                 task_trigger = TriggerDagRunOperator(
                     task_id = 'trigger_'+param["Executa DAG"],
-                    trigger_dag_id=param["Executa DAG"],
-                    trigger_rule="all_success",
-                    dag=dag
+                    trigger_dag_id = param["Executa DAG"],
+                    trigger_rule = "all_success",
+                    dag = dag
                 )    
             else:
                 task_trigger  = EmptyOperator(
