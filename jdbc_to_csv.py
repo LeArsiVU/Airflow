@@ -4,15 +4,17 @@
 #Israel Valencia 2022-11-23
 
 import pandas as pd
-import  psycopg2 as pg
-from   psycopg2 import Error
+
+import jaydebeapi,os
+from   jaydebeapi import Error
 
 #Parámetros de la conexión
-parametros_conexion = dict(host="localhost",
-                           port="5432",
-                           database="airflow_db",
-                           user="isra",
-                           password="I$ra2022")
+
+jdbc_driver_name = "org.postgresql.Driver"
+jdbc_driver_loc = os.path.join(r'/home/isra/Documentos/JDBC Drivers/postgresql-42.5.1.jar')
+
+
+connection_string = 'jdbc:postgresql://localhost:5432/airflow_db'
                            
 query = 'SELECT dag_id, fileloc, dag_hash FROM public.serialized_dag'
 
@@ -20,7 +22,10 @@ try:
     #Intenta realizar la conexión
     
     #Se establece la conexión
-    connection = pg.connect(**parametros_conexion)
+    connection = jaydebeapi.connect(jclassname=jdbc_driver_name,
+    url=connection_string, driver_args={'user':'isra','password':'I$ra2022'},
+    jars=jdbc_driver_loc)
+
     cursor = connection.cursor()
 
     #Se ejecuta la consulta
@@ -48,7 +53,7 @@ try:
     df_output = pd.DataFrame.from_records(data=datos,columns=columnas)
 
     #guarda en csv
-    df_output.to_csv('/home/isra/Descargas/tabla.csv',index=False)
+    df_output.to_csv('/home/isra/Descargas/tabla_jdbc.csv',index=False)
     print("¡Hecho!")
 
 except (Exception,Error) as error:
