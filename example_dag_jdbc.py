@@ -17,13 +17,13 @@ from airflow.models import DagModel
 
 from typing import Iterable
 
-import jaydebeapi,os
+import jaydebeapi
 from   jaydebeapi import Error
 
 import json
 
 @task(task_id="from_jdbc")
-def from_jdbc(parametros_conexion,query,path_root,schema,table):
+def jdbc_to_csv(parametros_conexion,query,path_root,schema,table):
     try: 
     #Intenta realizar la conexión
     
@@ -65,7 +65,6 @@ def from_jdbc(parametros_conexion,query,path_root,schema,table):
         print("Error de conexión: ",error)
         data =  pd.DataFrame()
         data.to_csv(f'{path_root}/{schema}_{table}.csv',index=False)
-
         return 0
     finally:
         #Para finalizar cierra la conexión si está abierta.
@@ -95,6 +94,7 @@ for param in params:
         else:
             scheduling = None
 
+        #Genera Etiquetas
         tags_json= '{'+f'"tags":[{param["Tags"]}]'+'}'
         tag_dict = json.loads(tags_json)
         tag_list = tag_dict['tags']
@@ -103,7 +103,7 @@ for param in params:
         tag_list.append(param["Unidad De Negocio O Transversales"])
         tag_list.append(param["Área De Negocio O Transversales"])
 
-
+        #Genera DAG de acuerdo a los parámetros
         with DAG(
             param["DAG"],
             schedule=scheduling,
@@ -117,18 +117,21 @@ for param in params:
             tags=tag_list
         ) as dag:
 
+            #Parámetros de la conexión JDBC
             conn_param = dict(jclassname=param["JDBC Name"],
                            url=f'jdbc:{param["Tipo Origen"]}://{param["Host"]}:{param["Puerto"]}/{param["DB Origen"]}',
                            driver_args={'user':param["Usuario"],'password':param["Password"]},
                            jars=param["JDBC Driver"])
 
-            task_from_pg_to_csv=from_jdbc(conn_param,
+            #Se hace el llamdo a la función que se conecta por JDBC
+            task_from_jdbc_to_csv=jdbc_to_csv(conn_param,
                                           param["Query Origen"],
                                           param["Ubicación Temporal"],
                                           param["Esquema Origen"],
                                           param["Tabla Origen"])  
 
             #Ejecuta un dag externo
+            #Si no se asigna un dag externo entonces se genera un operador vacío
             if param["Executa DAG"]!='':
                 task_trigger = TriggerDagRunOperator(
                     task_id = 'trigger_'+param["Executa DAG"],
@@ -142,4 +145,5 @@ for param in params:
                     trigger_rule="all_success",
                 )
                 
-            task_from_pg_to_csv>>task_trigger
+            #Se asigna orden de ejecuión de las tareas y operadores
+            task_from_jdbc_to_csv>>task_trigger
