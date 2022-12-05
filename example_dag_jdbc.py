@@ -121,15 +121,11 @@ for param in params:
                            driver_args={'user':param["Usuario"],'password':param["Password"]},
                            jars=param["JDBC Driver"])
 
-            #Activar DAG
-            #dag = DagModel.get_dagmodel(param["DAG"])
-            #dag.set_is_paused(is_paused=False)
-
-            task_from_pg_to_csv=from_jdbc(  conn_param,
-                                            param["Query Origen"],
-                                            param["Ubicación Temporal"],
-                                            param["Esquema Origen"],
-                                            param["Tabla Origen"])  
+            task_from_pg_to_csv=from_jdbc(conn_param,
+                                          param["Query Origen"],
+                                          param["Ubicación Temporal"],
+                                          param["Esquema Origen"],
+                                          param["Tabla Origen"])  
 
             #Ejecuta un dag externo
             if param["Executa DAG"]!='':
