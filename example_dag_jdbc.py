@@ -110,7 +110,7 @@ for param in params:
             start_date=pendulum.from_format(f'{param["Fecha Inicio"]}','YYYY-MM-DD', tz="America/Mazatlan"),
             catchup=False,
             dagrun_timeout=datetime.timedelta(minutes=4),
-            default_args={'owner':param['Dueño'], 
+            default_args={'owner':param['Owner'], 
                           'retries':0,
                           'retry_delay':timedelta(minutes=0)},
             description= f"Actualiza  {param['Proyecto']}.{param['Dataset']}.{param['Tabla']}",
