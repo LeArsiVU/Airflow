@@ -13,8 +13,6 @@ from airflow.decorators import task
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 
-from airflow.models import DagModel
-
 from typing import Iterable
 
 import jaydebeapi
@@ -22,7 +20,7 @@ from   jaydebeapi import Error
 
 import json
 
-@task(task_id="from_jdbc")
+@task(task_id="jdbc_to_csv")
 def jdbc_to_csv(parametros_conexion,query,path_root,schema,table):
     try: 
     #Intenta realizar la conexión
