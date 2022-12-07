@@ -20,6 +20,75 @@ from   jaydebeapi import Error
 
 import json
 
+@task(task_id="csv_to_jdbc")
+def csv_to_jdbc(parametros_conexion,query_destino,path_root,schema,table):
+    try: 
+    #Intenta realizar la conexión
+    
+    #Se establece la conexión
+        connection = jaydebeapi.connect(**parametros_conexion)
+
+        connection.jconn.setAutoCommit(False)
+
+        #Lee archivo con los datos
+        df = pd.read_csv(f'{path_root}/{schema}_{table}.csv').replace(np.nan,'')
+
+        cursor = connection.cursor()
+
+        #Se ejecuta la consulta
+        cursor.execute(query_destino)
+
+        sql_exceptions = []
+        row_nbr = 0
+        df_length = df.shape[0]
+
+        schema_table = f"{schema}.{table}"
+
+        cols_names_list = df.columns.values.tolist()
+        cols_names = f'({",".join(cols_names_list)})'
+
+        chunksize = 1000
+
+
+        while row_nbr < df_length:       
+            # Determine insert statement boundaries (size)
+            beginrow = row_nbr
+            endrow = df_length 
+            endrow = df_length if (row_nbr+chunksize) > df_length else row_nbr + chunksize 
+
+                # Extract the chunk
+            tuples = [tuple(x) for x in df.values[beginrow : endrow]]     
+
+            values_params = '(?,?,?)'       
+
+            sql = f"INSERT INTO {schema_table} {cols_names} VALUES {values_params}"
+
+            try:
+                cursor.executemany(sql,tuples)
+                connection.commit()
+            except Exception as e: 
+                sql_exceptions.append((beginrow,endrow, e))
+
+            row_nbr = endrow
+
+            cursor.close()
+            connection.close()
+
+        return sql_exceptions
+
+    except (Exception,Error) as error:
+        #Si el intento no funciona entonces arroja el mensaje de error
+        print("Error de conexión: ",error)
+        data =  pd.DataFrame()
+        data.to_csv(f'{path_root}/{schema}_{table}.csv',index=False)
+        return 0
+    finally:
+        #Para finalizar cierra la conexión si está abierta.
+        if (connection):
+            cursor.close()
+            connection.close()
+            print("Conexión cerrada.")
+
 @task(task_id="jdbc_to_csv")
 def jdbc_to_csv(parametros_conexion,query,path_root,schema,table):
     try: 
@@ -71,9 +140,10 @@ def jdbc_to_csv(parametros_conexion,query,path_root,schema,table):
             connection.close()
             print("Conexión cerrada.")
 
+
 # Info del excel
 excel_file = '/home/isra/Descargas/Canalización e Integración de datos.xlsx'
-excel_sheet = 'Catálogo Dags Ejemplo (JDBC TO JDBC)'
+excel_sheet = 'Catálogo Dags (JDBC TO JDBC)'
 
 #Lee el excel
 #Cambia NaN a Null, ya que los NaN no son válidos en el typo json de la tabla serialized_dags
@@ -111,7 +181,7 @@ for param in params:
             default_args={'owner':param['Owner'], 
                           'retries':0,
                           'retry_delay':timedelta(minutes=0)},
-            description= f"Actualiza  {param['Proyecto']}.{param['Dataset']}.{param['Tabla']}",
+            description= f"Actualiza  {param['DB Destino']}.{param['Esquema Destino']}.{param['Tabla Destino']}",
             tags=tag_list
         ) as dag:
 
