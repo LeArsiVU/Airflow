@@ -49,6 +49,7 @@ def csv_to_jdbc(parametros_conexion,query_destino,path_root,schema,table):
 
         chunksize = 1000
 
+        print(cols_names_list)
 
         while row_nbr < df_length:       
             # Determine insert statement boundaries (size)
@@ -59,7 +60,7 @@ def csv_to_jdbc(parametros_conexion,query_destino,path_root,schema,table):
                 # Extract the chunk
             tuples = [tuple(x) for x in df.values[beginrow : endrow]]     
 
-            values_params = '(?,?,?)'       
+            values_params = '(?,?,?,?)'       
 
             sql = f"INSERT INTO {schema_table} {cols_names} VALUES {values_params}"
 
@@ -203,7 +204,7 @@ for param in params:
 
             #Se hace el llamado a la función que se conecta por JDBC
             task_csv_to_jdbc=csv_to_jdbc(conn_param_destino,
-                                          param["Query Destino"],
+                                          f'{param["Query Destino"]} {param["Esquema Destino"]}.{param["Tabla Destino"]}',
                                           f'{param["Ubicación Temporal"]}/{param["Esquema Origen"]}_{param["Tabla Origen"]}.csv',
                                           param["Esquema Destino"],
                                           param["Tabla Destino"])  
