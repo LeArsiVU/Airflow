@@ -20,14 +20,12 @@ dsn_hostname = "localhost"
 dsn_port = "3306"
 dsn_uid = "root"
 dsn_pwd = "I$ra2022@"
-jdbc_driver_name = "com.mysql.jdbc.Driver"
+jdbc_driver_name = "com.mysql.cj.jdbc.Driver"
 jdbc_driver_loc = os.path.join(r'/home/isra/Documentos/JDBC Drivers/mysql-connector-j-8.0.31.jar')
 #
 
 
-sql_str = "select version()"
-
-connection_string='jdbc:mysql://'+ dsn_hostname+':'+ dsn_port +'/'+ dsn_database+'?defaultAutoCommit="false"'
+connection_string='jdbc:mysql://'+ dsn_hostname+':'+ dsn_port +'/'+ dsn_database+'?relaxAutoCommit=true'
 
 url = f'{connection_string}:user={dsn_uid};password={dsn_pwd}'
 
@@ -36,6 +34,8 @@ print("Connection String: " + url)
 schema_name= 'public'
 table = 'tabla_jdbc'
 
+sql_str = f"TRUNCATE TABLE {schema_name}.{table}"
+
 ##### Inicio
 
 connection = jaydebeapi.connect(jdbc_driver_name, connection_string, {'user': dsn_uid, 'password': dsn_pwd},
@@ -43,6 +43,7 @@ jars=jdbc_driver_loc)
 
 df = pd.read_csv('/home/isra/Descargas/tabla_jdbc.csv').replace(np.nan,'')
 
+connection.jconn.setAutoCommit(False)
 
 cursor = connection.cursor()
 sql_exceptions = []
@@ -57,6 +58,8 @@ cols_names = f'({",".join(cols_names_list)})'
 
 chunksize = 1000
 
+cursor.execute(sql_str)
+
 while row_nbr < df_length:       
     # Determine insert statement boundaries (size)
     beginrow = row_nbr
@@ -64,11 +67,11 @@ while row_nbr < df_length:
     endrow = df_length if (row_nbr+chunksize) > df_length else row_nbr + chunksize 
 
         # Extract the chunk
-    tuples = [tuple(x) for x in df.values[beginrow : endrow]]            
-    values_params = '(?,?,?)'       
-    sql = f"INSERT INTO {schema_table} {cols_names} VALUES {values_params}"
+    tuples = [tuple(x) for x in df.values[beginrow : endrow]]     
 
-    print(tuples)
+    values_params = '(?,?,?)'       
+
+    sql = f"INSERT INTO {schema_table} {cols_names} VALUES {values_params}"
 
     try:
         cursor.executemany(sql,tuples)
