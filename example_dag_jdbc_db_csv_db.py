@@ -31,7 +31,7 @@ def csv_to_jdbc(parametros_conexion,query_destino,path_root,schema,table):
         connection.jconn.setAutoCommit(False)
 
         #Lee archivo con los datos
-        df = pd.read_csv(f'{path_root}/{schema}_{table}.csv').replace(np.nan,'')
+        df = pd.read_csv(path_root).replace(np.nan,'')
 
         cursor = connection.cursor()
 
@@ -71,17 +71,12 @@ def csv_to_jdbc(parametros_conexion,query_destino,path_root,schema,table):
 
             row_nbr = endrow
 
-            cursor.close()
-            connection.close()
-
         return sql_exceptions
 
     except (Exception,Error) as error:
         #Si el intento no funciona entonces arroja el mensaje de error
         print("Error de conexión: ",error)
-        data =  pd.DataFrame()
-        data.to_csv(f'{path_root}/{schema}_{table}.csv',index=False)
-        return 0
+        return []
     finally:
         #Para finalizar cierra la conexión si está abierta.
         if (connection):
@@ -185,18 +180,33 @@ for param in params:
             tags=tag_list
         ) as dag:
 
+            #Conexion tabla origen
             #Parámetros de la conexión JDBC
             conn_param = dict(jclassname=param["JDBC Name"],
                            url=f'jdbc:{param["Tipo Origen"]}://{param["Host Origen"]}:{param["Puerto Origen"]}/{param["DB Origen"]}',
                            driver_args={'user':param["Usuario Origen"],'password':param["Password Origen"]},
                            jars=param["JDBC Driver"])
 
-            #Se hace el llamdo a la función que se conecta por JDBC
+            #Se hace el llamado a la función que se conecta por JDBC
             task_from_jdbc_to_csv=jdbc_to_csv(conn_param,
                                           param["Query Origen"],
                                           param["Ubicación Temporal"],
                                           param["Esquema Origen"],
                                           param["Tabla Origen"])  
+                    
+            #Conexion tabla origen
+            #Parámetros de la conexión JDBC
+            conn_param_destino = dict(jclassname=param["JDBC Name Destino"],
+                           url=f'jdbc:{param["Tipo Destino"]}://{param["Host Destino"]}:{param["Puerto Destino"]}/{param["DB Destino"]}',
+                           driver_args={'user':param["Usuario Destino"],'password':param["Password Destino"]},
+                           jars=param["JDBC Driver Destino"])
+
+            #Se hace el llamado a la función que se conecta por JDBC
+            task_csv_to_jdbc=csv_to_jdbc(conn_param_destino,
+                                          param["Query Destino"],
+                                          f'{param["Ubicación Temporal"]}/{param["Esquema Origen"]}_{param["Tabla Origen"]}.csv',
+                                          param["Esquema Destino"],
+                                          param["Tabla Destino"])  
 
             #Ejecuta un dag externo
             #Si no se asigna un dag externo entonces se genera un operador vacío
@@ -214,4 +224,4 @@ for param in params:
                 )
                 
             #Se asigna orden de ejecuión de las tareas y operadores
-            task_from_jdbc_to_csv>>task_trigger
+            task_from_jdbc_to_csv>>task_csv_to_jdbc>>task_trigger
