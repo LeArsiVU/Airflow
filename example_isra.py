@@ -35,6 +35,8 @@ ctl_dags = pd.read_excel(excel_file,excel_sheet).replace(np.nan,'')
 #Se guarda la información con el nombre de DAG como índice
 params: Iterable[dict] = ctl_dags.set_index('DAG', drop=False).to_dict('records')
 
+print(params)
+
 #Es posible definir más dags desde un solo archivo
 for param in params:
     if param["Activo"] == True:
@@ -72,5 +74,18 @@ for param in params:
                     trigger_rule="all_success",
             )
             Tarea_5 = to_csv(param)
+
+
+            Tarea_6 = EmptyOperator(
+                    task_id="Tarea_6",
+                    trigger_rule="all_success",
+            )
                 
-        Tarea_1>>[Tarea_2,Tarea_3]>>Tarea_4>>Tarea_5
+        Tarea_1>>Tarea_2
+        Tarea_1>>Tarea_3
+
+        Tarea_2>>Tarea_4
+        Tarea_3>>Tarea_5
+
+        Tarea_5>>Tarea_6
+        Tarea_4>>Tarea_6
