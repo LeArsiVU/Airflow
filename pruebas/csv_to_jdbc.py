@@ -69,7 +69,9 @@ while row_nbr < df_length:
         # Extract the chunk
     tuples = [tuple(x) for x in df.values[beginrow : endrow]]     
 
-    values_params = '(?,?,?)'       
+    values_params = '('+",".join('?' for i in cols_names_list)+')' 
+    
+    print(values_params)
 
     sql = f"INSERT INTO {schema_table} {cols_names} VALUES {values_params}"
 

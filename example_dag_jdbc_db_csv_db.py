@@ -60,7 +60,7 @@ def csv_to_jdbc(parametros_conexion,query_destino,path_root,schema,table):
                 # Extract the chunk
             tuples = [tuple(x) for x in df.values[beginrow : endrow]]     
 
-            values_params = '(?,?,?,?)'       
+            values_params = '('+",".join('?' for i in cols_names_list)+')' 
 
             sql = f"INSERT INTO {schema_table} {cols_names} VALUES {values_params}"
 
