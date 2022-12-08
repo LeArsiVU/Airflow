@@ -204,7 +204,7 @@ for param in params:
 
             #Se hace el llamado a la función que se conecta por JDBC
             task_csv_to_jdbc=csv_to_jdbc(conn_param_destino,
-                                          f'{param["Query Destino"]} {param["Esquema Destino"]}.{param["Tabla Destino"]}',
+                                          f'{param["Query Destino"]} {param["Esquema Destino"]}.{param["Tabla Destino"]} {param["Filtro Query Destino"]}',
                                           f'{param["Ubicación Temporal"]}/{param["Esquema Origen"]}_{param["Tabla Origen"]}.csv',
                                           param["Esquema Destino"],
                                           param["Tabla Destino"])  

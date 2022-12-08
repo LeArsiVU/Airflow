@@ -35,7 +35,6 @@ ctl_dags = pd.read_excel(excel_file,excel_sheet).replace(np.nan,'')
 #Se guarda la información con el nombre de DAG como índice
 params: Iterable[dict] = ctl_dags.set_index('DAG', drop=False).to_dict('records')
 
-print(params)
 
 #Es posible definir más dags desde un solo archivo
 for param in params:
