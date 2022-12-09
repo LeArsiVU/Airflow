@@ -182,7 +182,7 @@ for param in params:
                 #Conexion tabla origen
                 #Parámetros de la conexión JDBC
                 conn_param = dict(jclassname=param["JDBC Name"],
-                            url=f'jdbc:{param["Tipo Origen"]}://{param["Host Origen"]}:{param["Puerto Origen"]}/{param["DB Origen"]}',
+                            url=f'jdbc:{param["Tipo Origen"]}://{param["Host Origen"]}:{int(param["Puerto Origen"])}/{param["DB Origen"]}',
                             driver_args={'user':param["Usuario Origen"],'password':param["Password Origen"]},
                             jars=param["JDBC Driver"])
 
@@ -201,7 +201,7 @@ for param in params:
             #Conexion tabla origen
             #Parámetros de la conexión JDBC
             conn_param_destino = dict(jclassname=param["JDBC Name Destino"],
-                           url=f'jdbc:{param["Tipo Destino"]}://{param["Host Destino"]}:{param["Puerto Destino"]}/{param["DB Destino"]}',
+                           url=f'jdbc:{param["Tipo Destino"]}://{param["Host Destino"]}:{int(param["Puerto Destino"])}/{param["DB Destino"]}',
                            driver_args={'user':param["Usuario Destino"],'password':param["Password Destino"]},
                            jars=param["JDBC Driver Destino"])
 
