@@ -20,6 +20,15 @@ from   jaydebeapi import Error
 
 import json
 
+##Documentación del dag##
+
+doc_md = """
+### Dag generador automáticamente 
+#### Este dag es generado automáticamente a partir de la información documentada en el siguiente archivo de control:
+- [Catálogo de dags](https://docs.google.com/spreadsheets/d/1NsPnYiHwqVLBHR8QwOXaXEj1WakJ_kko3MDg2_4U2ds/edit#gid=1592617781)"""
+
+#####
+
 @task(task_id="csv_to_jdbc")
 def csv_to_jdbc(parametros_conexion,query_destino,path_root,schema,table):
     try: 
@@ -168,6 +177,7 @@ for param in params:
         with DAG(
             param["DAG"],
             schedule=scheduling,
+            doc_md=doc_md,
             start_date=pendulum.from_format(f'{param["Fecha Inicio"]}','YYYY-MM-DD', tz="America/Mazatlan"),
             catchup=False,
             dagrun_timeout=datetime.timedelta(minutes=4),
