@@ -23,7 +23,7 @@ import json
 ##Documentación del dag##
 
 doc_md = """
-### Dag generador automáticamente 
+### Dag generado automáticamente 
 #### Este dag es generado automáticamente a partir de la información documentada en el siguiente archivo de control:
 - [Catálogo de dags](https://docs.google.com/spreadsheets/d/1NsPnYiHwqVLBHR8QwOXaXEj1WakJ_kko3MDg2_4U2ds/edit#gid=1592617781)"""
 
