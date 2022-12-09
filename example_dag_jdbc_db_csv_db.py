@@ -193,7 +193,7 @@ for param in params:
                                             param["Esquema Origen"],
                                             param["Tabla Origen"])  
             else:
-                ask_from_jdbc_to_csv=  EmptyOperator(
+                task_from_jdbc_to_csv=  EmptyOperator(
                     task_id="empty_bd_origen",
                     trigger_rule="all_success",
                 )
