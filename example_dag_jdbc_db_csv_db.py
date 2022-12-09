@@ -153,10 +153,7 @@ for param in params:
     if param["Activo"] == True:
         
         #Si no se tiene una expresion CRON entonces se establece un valor de None
-        if param["Schedule"] != '':
-            scheduling = param["Schedule"]
-        else:
-            scheduling = None
+        scheduling = param["Schedule"] if param["Schedule"] != '' else None
 
         #Genera Etiquetas
         tags_json= '{'+f'"tags":[{param["Tags"]}]'+'}'
@@ -180,20 +177,26 @@ for param in params:
             description= f"Actualiza  {param['DB Destino']}.{param['Esquema Destino']}.{param['Tabla Destino']}",
             tags=tag_list
         ) as dag:
+            
+            if param["Tabla Origen"]!='':
+                #Conexion tabla origen
+                #Parámetros de la conexión JDBC
+                conn_param = dict(jclassname=param["JDBC Name"],
+                            url=f'jdbc:{param["Tipo Origen"]}://{param["Host Origen"]}:{param["Puerto Origen"]}/{param["DB Origen"]}',
+                            driver_args={'user':param["Usuario Origen"],'password':param["Password Origen"]},
+                            jars=param["JDBC Driver"])
 
-            #Conexion tabla origen
-            #Parámetros de la conexión JDBC
-            conn_param = dict(jclassname=param["JDBC Name"],
-                           url=f'jdbc:{param["Tipo Origen"]}://{param["Host Origen"]}:{param["Puerto Origen"]}/{param["DB Origen"]}',
-                           driver_args={'user':param["Usuario Origen"],'password':param["Password Origen"]},
-                           jars=param["JDBC Driver"])
-
-            #Se hace el llamado a la función que se conecta por JDBC
-            task_from_jdbc_to_csv=jdbc_to_csv(conn_param,
-                                          param["Query Origen"],
-                                          param["Ubicación Temporal"],
-                                          param["Esquema Origen"],
-                                          param["Tabla Origen"])  
+                #Se hace el llamado a la función que se conecta por JDBC
+                task_from_jdbc_to_csv=jdbc_to_csv(conn_param,
+                                            param["Query Origen"],
+                                            param["Ubicación Temporal"],
+                                            param["Esquema Origen"],
+                                            param["Tabla Origen"])  
+            else:
+                ask_from_jdbc_to_csv=  EmptyOperator(
+                    task_id="empty_bd_origen",
+                    trigger_rule="all_success",
+                )
                     
             #Conexion tabla origen
             #Parámetros de la conexión JDBC
@@ -205,7 +208,7 @@ for param in params:
             #Se hace el llamado a la función que se conecta por JDBC
             task_csv_to_jdbc=csv_to_jdbc(conn_param_destino,
                                           f'{param["Query Destino"]} {param["Esquema Destino"]}.{param["Tabla Destino"]} {param["Filtro Query Destino"]}',
-                                          f'{param["Ubicación Temporal"]}/{param["Esquema Origen"]}_{param["Tabla Origen"]}.csv',
+                                          f'{param["Ubicación Temporal"]}/{param["Esquema Origen"]}_{param["Tabla Origen"]}.csv' if param["Tabla Origen"]!='' else param["Ubicación Temporal"],
                                           param["Esquema Destino"],
                                           param["Tabla Destino"])  
 
@@ -220,9 +223,9 @@ for param in params:
                 )    
             else:
                 task_trigger  = EmptyOperator(
-                    task_id="empty",
+                    task_id="empty_dag_run",
                     trigger_rule="all_success",
                 )
-                
+            
             #Se asigna orden de ejecuión de las tareas y operadores
             task_from_jdbc_to_csv>>task_csv_to_jdbc>>task_trigger
