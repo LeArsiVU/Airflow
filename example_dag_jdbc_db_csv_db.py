@@ -20,15 +20,6 @@ from   jaydebeapi import Error
 
 import json
 
-##Documentación del dag##
-
-doc_md = """
-### Dag generado automáticamente 
-#### Este dag es generado automáticamente a partir de la información documentada en el siguiente archivo de control:
-- [Catálogo de dags](https://docs.google.com/spreadsheets/d/1NsPnYiHwqVLBHR8QwOXaXEj1WakJ_kko3MDg2_4U2ds/edit#gid=1592617781)"""
-
-#####
-
 @task(task_id="csv_to_jdbc")
 def csv_to_jdbc(parametros_conexion,query_destino,path_root,schema,table):
     try: 
@@ -156,6 +147,13 @@ ctl_dags = pd.read_excel(excel_file,excel_sheet).replace(np.nan,'')
 
 #Se guarda la información con el nombre de DAG como índice
 params: Iterable[dict] = ctl_dags.set_index('DAG', drop=False).to_dict('records')
+
+##Documentación del dag##
+doc_md = """
+### Dag generado automáticamente 
+#### Este dag es generado automáticamente a partir de la información documentada en el siguiente archivo de control:
+- ["""+excel_sheet+"""](https://docs.google.com/spreadsheets/d/1NsPnYiHwqVLBHR8QwOXaXEj1WakJ_kko3MDg2_4U2ds/edit#gid=1592617781)"""
+#####
 
 #Es posible definir más dags desde un solo archivo
 for param in params:
