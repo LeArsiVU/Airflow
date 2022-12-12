@@ -150,9 +150,23 @@ params: Iterable[dict] = ctl_dags.set_index('DAG', drop=False).to_dict('records'
 
 ##Documentación del dag##
 doc_md = """
-### Dag generado automáticamente 
-#### Este dag es generado automáticamente a partir de la información documentada en el siguiente archivo de control:
-- ["""+excel_sheet+"""](https://docs.google.com/spreadsheets/d/1NsPnYiHwqVLBHR8QwOXaXEj1WakJ_kko3MDg2_4U2ds/edit#gid=1592617781)"""
+# Dag generado automáticamente 
+
+Este dag es generado automáticamente a partir de la información documentada en el siguiente archivo de control:
+- ["""+excel_sheet+"""](https://docs.google.com/spreadsheets/d/1NsPnYiHwqVLBHR8QwOXaXEj1WakJ_kko3MDg2_4U2ds/edit#gid=1592617781)
+
+## Casos del proceso de ETL
+
+### Caso 1
+
+Si asignamos una tabla origen entonces se realiza el siguiente proceso:
+
+1. Se copian los datos de la tabla origen mediante una conexión JDBC hacia un archivo csv.
+2. Se copian los datos desde el csv generado hacia una tabla destino  mediante una conexión JDBC.
+
+<img src="https://github.com/LeArsiVU/Airflow/blob/main/example_dag_jdbc_db_csv_db.png?raw=true" width=500>
+
+"""
 #####
 
 #Es posible definir más dags desde un solo archivo
