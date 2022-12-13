@@ -138,7 +138,9 @@ def jdbc_to_csv(parametros_conexion,query,path_root,schema,table):
 
 # Info del excel
 # Lee directamente desde el excel
-# Por el momento el google sheets consultado tiene acceso público
+# Por el momento el google sheets consultado tiene acceso público, se tendrá 
+# que cambiar por una acceso por service account
+
 FILE_ID = '1NsPnYiHwqVLBHR8QwOXaXEj1WakJ_kko3MDg2_4U2ds'
 SHEET_ID = '1592617781'
 
