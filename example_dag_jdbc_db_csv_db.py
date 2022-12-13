@@ -10,7 +10,6 @@ import numpy as np
 
 from airflow import DAG
 from airflow.decorators import task
-from airflow.operators.empty import EmptyOperator
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 
 from typing import Iterable
@@ -254,14 +253,19 @@ for param in params:
                     trigger_rule = "all_success",
                     dag = dag
                 )    
-            else:
-                task_trigger  = EmptyOperator(
-                    task_id="empty_dag_run",
-                    trigger_rule="all_success",
-                )
             
             #Se asigna orden de ejecuión de las tareas y operadores
-            if param["Tabla Origen"]!='':
+            if param["Tabla Origen"]!='' and param["Tabla Destino"]!='' and param["Executa DAG"]!='':
                 task_from_jdbc_to_csv>>task_csv_to_jdbc>>task_trigger
-            else: 
+            elif param["Tabla Origen"]!='' and param["Tabla Destino"]!='' and param["Executa DAG"]=='':
+                task_from_jdbc_to_csv>>task_csv_to_jdbc
+            elif param["Tabla Origen"]=='' and param["Tabla Destino"]!='' and param["Executa DAG"]!='':
                 task_csv_to_jdbc>>task_trigger
+            elif param["Tabla Origen"]=='' and param["Tabla Destino"]!='' and param["Executa DAG"]=='':
+                task_csv_to_jdbc
+            elif param["Tabla Origen"]!='' and param["Tabla Destino"]=='' and param["Executa DAG"]!='':
+                task_from_jdbc_to_csv>>task_trigger
+            elif param["Tabla Origen"]!='' and param["Tabla Destino"]=='' and param["Executa DAG"]=='':
+                task_from_jdbc_to_csv
+            else: 
+                print("Secuencia sin definir")
