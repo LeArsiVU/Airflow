@@ -163,7 +163,7 @@ Si asignamos una tabla origen entonces se realiza el siguiente proceso:
 1. Se copian los datos de la tabla origen mediante una conexión JDBC hacia un archivo csv.
 2. Se copian los datos desde el csv generado hacia una tabla destino  mediante una conexión JDBC.
 
-<img src="https://github.com/LeArsiVU/Airflow/blob/main/example_dag_jdbc_db_csv_db_caso_1.png?raw=true" width=500>
+<img src="https://github.com/LeArsiVU/Airflow/blob/main/imagenes/example_dag_jdbc_db_csv_db_caso_1.png?raw=true" width=500>
 
 ### Caso 2
 Si no asignamos una tabla origen entonces se realiza el siguiente proceso:
@@ -171,14 +171,14 @@ Si no asignamos una tabla origen entonces se realiza el siguiente proceso:
 - Se copian los datos desde el csv que se indica en la columna "Ubicación Temporal" hacia una tabla destino  mediante una conexión JDBC.
 
 
-<img src="https://github.com/LeArsiVU/Airflow/blob/main/example_dag_jdbc_db_csv_db_caso_2.png?raw=true" width=300>
+<img src="https://github.com/LeArsiVU/Airflow/blob/main/imagenes/example_dag_jdbc_db_csv_db_caso_2.png?raw=true" width=300>
 
 ### Caso 3
 
 - Se copian los datos de la tabla origen mediante una conexión JDBC hacia un archivo csv con el nomnre esquema_tabla, dada la ubicación en "Ubicación Temporal".
 
 
-<img src="https://github.com/LeArsiVU/Airflow/blob/main/example_dag_jdbc_db_csv_db_caso_3.png?raw=true" width=300>
+<img src="https://github.com/LeArsiVU/Airflow/blob/main/imagenes/example_dag_jdbc_db_csv_db_caso_3.png?raw=true" width=300>
 
 """
 #####
