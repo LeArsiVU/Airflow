@@ -137,12 +137,16 @@ def jdbc_to_csv(parametros_conexion,query,path_root,schema,table):
 
 
 # Info del excel
-excel_file = '/home/isra/Descargas/Canalización e Integración de datos.xlsx'
-excel_sheet = 'Catálogo Dags (JDBC TO JDBC)'
+# Lee directamente desde el excel
+# Por el momento el google sheets consultado tiene acceso público
+FILE_ID = '1NsPnYiHwqVLBHR8QwOXaXEj1WakJ_kko3MDg2_4U2ds'
+SHEET_ID = '1592617781'
 
-#Lee el excel
+URL = f'https://docs.google.com/spreadsheets/d/{FILE_ID}/export?format=xlsx&gid={SHEET_ID}'
+
+#Lee el excel desde google sheets
 #Cambia NaN a Null, ya que los NaN no son válidos en el typo json de la tabla serialized_dags
-ctl_dags = pd.read_excel(excel_file,excel_sheet).replace(np.nan,'')
+ctl_dags = pd.read_excel(URL).replace(np.nan,'')
 
 #Se guarda la información con el nombre de DAG como índice
 params: Iterable[dict] = ctl_dags.set_index('DAG', drop=False).to_dict('records')
@@ -152,7 +156,7 @@ doc_md = """
 # Dag generado automáticamente 
 
 Este dag es generado automáticamente a partir de la información documentada en el siguiente archivo de control:
-- ["""+excel_sheet+"""](https://docs.google.com/spreadsheets/d/1NsPnYiHwqVLBHR8QwOXaXEj1WakJ_kko3MDg2_4U2ds/edit#gid=1592617781)
+- [Catálogo Dags (JDBC TO JDBC)](https://docs.google.com/spreadsheets/d/1NsPnYiHwqVLBHR8QwOXaXEj1WakJ_kko3MDg2_4U2ds/edit#gid=1592617781)
 
 ## Casos del proceso de ETL
 

@@ -20,11 +20,13 @@ import json
 #Permite saber la posicion de creación de un operador dado su nombre
 
 # Info del excel
-excel_file = '/home/isra/Descargas/Canalización e Integración de datos.xlsx'
-excel_sheet = 'Ejecuta Ejemplo'
+FILE_ID = '1NsPnYiHwqVLBHR8QwOXaXEj1WakJ_kko3MDg2_4U2ds'
+SHEET_ID = '559945068'
+
+URL = f'https://docs.google.com/spreadsheets/d/{FILE_ID}/export?format=xlsx&gid={SHEET_ID}'
 
 #Info del ejecuta
-info_ejecuta = pd.read_excel(excel_file,excel_sheet,header=None,usecols=[0,1]).replace(np.nan,'').transpose()
+info_ejecuta = pd.read_excel(URL,header=None,usecols=[0,1]).replace(np.nan,'').transpose()
 
 header = info_ejecuta.iloc[0]
 info_ejecuta.columns= header
@@ -40,7 +42,7 @@ tag_list.append(info_ejecuta["Área De Negocio O Transversales"].to_string(index
 
 #Lee el excel
 #Cambia NaN a Null, ya que los NaN no son válidos en el typo json de la tabla serialized_dags
-ctl_dags = pd.read_excel(excel_file,excel_sheet,usecols=[3,4,5]).replace(np.nan,'')
+ctl_dags = pd.read_excel(URL,usecols=[3,4,5]).replace(np.nan,'')
 ctl_dags = ctl_dags[ctl_dags["DAG"]!='']
 
 #Si el dag anterior está vació por default se asigna el operador de inicio
