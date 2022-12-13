@@ -255,14 +255,17 @@ for param in params:
                 )    
             
             #Se asigna orden de ejecuión de las tareas y operadores
+            #Caso 1
             if param["Tabla Origen"]!='' and param["Tabla Destino"]!='' and param["Executa DAG"]!='':
                 task_from_jdbc_to_csv>>task_csv_to_jdbc>>task_trigger
             elif param["Tabla Origen"]!='' and param["Tabla Destino"]!='' and param["Executa DAG"]=='':
                 task_from_jdbc_to_csv>>task_csv_to_jdbc
+            #Caso 2
             elif param["Tabla Origen"]=='' and param["Tabla Destino"]!='' and param["Executa DAG"]!='':
                 task_csv_to_jdbc>>task_trigger
             elif param["Tabla Origen"]=='' and param["Tabla Destino"]!='' and param["Executa DAG"]=='':
                 task_csv_to_jdbc
+            #Caso 3
             elif param["Tabla Origen"]!='' and param["Tabla Destino"]=='' and param["Executa DAG"]!='':
                 task_from_jdbc_to_csv>>task_trigger
             elif param["Tabla Origen"]!='' and param["Tabla Destino"]=='' and param["Executa DAG"]=='':
