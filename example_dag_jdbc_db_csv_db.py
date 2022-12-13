@@ -245,7 +245,6 @@ for param in params:
                                             param["Tabla Destino"])  
 
             #Ejecuta un dag externo
-            #Si no se asigna un dag externo entonces se genera un operador vacío
             if param["Executa DAG"]!='':
                 task_trigger = TriggerDagRunOperator(
                     task_id = 'trigger_'+param["Executa DAG"],
