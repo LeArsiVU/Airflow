@@ -27,3 +27,12 @@ for param in params:
     tag_list = tag_dict['tags']
     tag_list.append("AA")
     print(tag_list,type(tag_dict))
+
+
+#Con esto se puede crear las tablas a partir de la las tablas
+# Solo hay que colocar el nombre de las columnas en una columna del google sheet
+col_names = '{"col_names":[{"name":"columna1","type":"INT","mode":"NULLABLE"},{"name":"columna2","type":"INT","mode":"NULLABLE"}]}'
+col_dict = json.loads(col_names)
+
+print(col_dict["col_names"][1]["name"])
+
