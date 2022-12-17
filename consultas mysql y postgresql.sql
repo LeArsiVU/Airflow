@@ -7,9 +7,7 @@ CREATE TABLE pruebas.serialized_dag(
     fileloc TEXT,
     dag_hash TEXT,
     last_updated DATETIME
-)
-
-SELECT * FROM `pruebas`.`serialized_dag` LIMIT 1000;
+);
 
 CREATE TABLE pruebas.localidades(
 ENTIDAD INT,
@@ -18,7 +16,17 @@ MUNICIPIO INT,
 NOMBREMUNICIPIO TEXT,
 LOCALIDAD INT,
 NOMBRELOCALIDAD TEXT,
-TIPO TEXT)
+TIPO TEXT);
+
+CREATE TABLE pruebas.lighthouse(
+Fecha TEXT,
+Pagina TEXT,
+Indicador TEXT,
+Resultado TEXT,
+Meta FLOAT,
+ispositivo TEXT,
+Red TEXT,
+Cache TEXT);
 
 --PostgreSQL
 

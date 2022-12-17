@@ -61,6 +61,8 @@ def csv_to_jdbc(parametros_conexion,query_destino,path_root,schema,table):
 
             values_params = '('+",".join('?' for i in cols_names_list)+')' 
 
+
+            #Las columnas del dataframe deben tener el mismo nombre que las columnas de las tablas
             sql = f"INSERT INTO {schema_table} {cols_names} VALUES {values_params}"
 
             try:
