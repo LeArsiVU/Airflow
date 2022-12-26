@@ -107,7 +107,13 @@ def get_data_api_kraken(api_url,body,headers):
 
     return df_data
 
+import logging
 
+logger = logging.getLogger(__name__)
+
+def cw_sla_missed_take_action(*args, **kwargs):
+    logger.info("************************************* SLA missed! ***************************************")
+    logger.info(args)
 
 # Info del excel
 # Lee directamente desde el excel
@@ -162,9 +168,11 @@ for param in params:
             dagrun_timeout=datetime.timedelta(minutes=4),
             default_args={'owner':param['Owner'], 
                           'retries':0,
-                          'retry_delay':timedelta(minutes=0)},
+                          'retry_delay':timedelta(minutes=0),
+                          'sla': timedelta(seconds=5)},#El Dag debe ejecutarse dentro de este delta de tiempo despúes de que se inicie la ejecución por trigger.
             description= f"Actualiza  {param['DB Destino']}.{param['Esquema Destino']}.{param['Tabla Destino']}",
-            tags=tag_list
+            tags=tag_list,
+            sla_miss_callback=cw_sla_missed_take_action  # callback function
         ) as dag:
             
             #Se cargan las credenciales de acceso a la API
